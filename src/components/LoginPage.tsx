@@ -15,9 +15,16 @@ const LoginPage: React.FC = () => {
     const handleLogin = () => {
       // Wywołanie akcji logowania
       dispatch(login({ email, password }));
-  
+      if(localStorage.getItem('token') === null){
+        alert('Błędne dane logowania');          
+      }
+      else{
+        alert('Zalogowano');
+        navigate('/books');          
+      }
       // Przekierowanie do strony z książkami po zalogowaniu
-      navigate('/books');
+      
+      
     };
     const theme = createTheme();
     return (
@@ -48,6 +55,7 @@ const LoginPage: React.FC = () => {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                onChange={(e) => setEmail(e.target.value)}
               />
               <TextField
                 margin="normal"
@@ -58,6 +66,7 @@ const LoginPage: React.FC = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                onChange={(e) => setPassword(e.target.value)}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}

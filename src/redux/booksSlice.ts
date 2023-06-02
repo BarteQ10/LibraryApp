@@ -4,6 +4,11 @@ import axios from 'axios';
 interface Book {
   id: number;
   title: string;
+  author: string;
+  genre: string;
+  description: string;
+  coverImage: string;
+  isAvailable: boolean;
 }
 
 interface BooksState {
@@ -20,7 +25,7 @@ const initialState: BooksState = {
 
 export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   try {
-    const response = await axios.get('/api/books'); // Zastąp odpowiednim endpointem API
+    const response = await axios.get('http://localhost:5041/api/Books'); 
     return response.data;
   } catch (error) {
     throw Error('Nie udało się pobrać listy książek.');
