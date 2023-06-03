@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL;
 interface AuthState {
   isAuthenticated: boolean;
 }
@@ -15,7 +16,7 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action: PayloadAction<{ email: string; password: string }>) => {
       // Przetwarzanie logiki logowania, np. wywołanie żądania do serwera
-      axios.post('http://localhost:5041/api/Account/login', {
+      axios.post(`${apiUrl}/Account/login`, {
         email: action.payload.email,
         password: action.payload.password,
       })

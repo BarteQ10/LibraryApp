@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL;
 interface Book {
   id: number;
   title: string;
@@ -25,7 +26,7 @@ const initialState: BooksState = {
 
 export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   try {
-    const response = await axios.get('http://localhost:5041/api/Books'); 
+    const response = await axios.get(`${apiUrl}/Books`); 
     return response.data;
   } catch (error) {
     throw Error('Nie udało się pobrać listy książek.');
