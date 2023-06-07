@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -47,6 +47,38 @@ return response.data;
 throw Error('Nie udało się pobrać listy wypożyczeń.');
 }
 });
+
+export const createLoan = createAsyncThunk(
+  'loans/createLoan',
+  async (loan: Loan, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${apiUrl}/Loans`, loan, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue('Nie udało się utworzyć wypożyczenia.');
+    }
+  }
+);
+
+export const deleteLoan = createAsyncThunk(
+  'loans/deleteLoan',
+  async (id: number, { rejectWithValue }) => {
+    try {
+      await axios.delete(`${apiUrl}/Loans/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return id;
+    } catch (error) {
+      return rejectWithValue('Nie udało się usunąć wypożyczenia.');
+    }
+  }
+);
 const loansSlice = createSlice({
   name: "loans",
   initialState,
@@ -66,7 +98,14 @@ const loansSlice = createSlice({
         state.error =
           action.error.message ||
           "Wystąpił błąd podczas pobierania listy wypożyczeń.";
-      });
+      })
+      .addCase(createLoan.fulfilled, (state, action: PayloadAction<Loan>) => {
+        state.loans.push(action.payload);
+      })
+      .addCase(deleteLoan.fulfilled, (state, action: PayloadAction<number>) => {
+        state.loans = state.loans.filter((loan) => loan.id !== action.payload);
+      });;
+      
   },
 });
 export default loansSlice.reducer;

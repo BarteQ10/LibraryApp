@@ -47,16 +47,17 @@ const LoansPage: React.FC = () => {
   }, [dispatch]);
   return (
     <div>
-      <Typography variant="h5">Strona wyświetlająca książki</Typography>
+      <Typography variant="h5">Loans Page</Typography>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Title</StyledTableCell>
-            <StyledTableCell align="right">Author</StyledTableCell>
+            <StyledTableCell>Title</StyledTableCell>           
+            <StyledTableCell align="right">Book Name</StyledTableCell>
+            <StyledTableCell align="right">User Email</StyledTableCell>
             <StyledTableCell align="right">Borrow Date</StyledTableCell>
             <StyledTableCell align="right">Returned Date</StyledTableCell>
-            <StyledTableCell align="right">Is Available</StyledTableCell>
+            <StyledTableCell align="right">Is Returned</StyledTableCell>          
           </TableRow>
         </TableHead>
         <TableBody>
@@ -69,6 +70,7 @@ const LoansPage: React.FC = () => {
                 {loan.user.email}
               </StyledTableCell>
               <StyledTableCell align="right">{loan.book.title}</StyledTableCell>
+              <StyledTableCell align="right">{loan.user.email}</StyledTableCell>
               <StyledTableCell align="right">{new Date(loan.borrowDate).toUTCString()}</StyledTableCell>
               <StyledTableCell align="right">{loan.returnDate ? new Date(loan.returnDate).toUTCString(): null}</StyledTableCell>
               <StyledTableCell align="right">{loan.isReturned ? "true" : "false"}</StyledTableCell>

@@ -33,6 +33,32 @@ export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   }
 });
 
+export const createBook = createAsyncThunk('books/createBook', async (book: Book) => {
+  try {
+    const response = await axios.post(`${apiUrl}/Books`, book);
+    return response.data;
+  } catch (error) {
+    throw Error('Nie udało się dodać książki.');
+  }
+});
+
+export const updateBook = createAsyncThunk('books/updateBook', async (book: Book) => {
+  try {
+    const response = await axios.put(`${apiUrl}/Books/${book.id}`, book);
+    return response.data;
+  } catch (error) {
+    throw Error('Nie udało się zaktualizować książki.');
+  }
+});
+
+export const deleteBook = createAsyncThunk('books/deleteBook', async (bookId: number) => {
+  try {
+    await axios.delete(`${apiUrl}/Books/${bookId}`);
+    return bookId;
+  } catch (error) {
+    throw Error('Nie udało się usunąć książki.');
+  }
+});
 const booksSlice = createSlice({
   name: 'books',
   initialState,
@@ -49,7 +75,7 @@ const booksSlice = createSlice({
       })
       .addCase(fetchBooks.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Wystąpił błąd podczas pobierania listy książek.';
+        state.error = action.error.message ?? 'Wystąpił błąd podczas pobierania listy książek.';
       });
   },
 });

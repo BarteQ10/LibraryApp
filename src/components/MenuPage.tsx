@@ -1,7 +1,17 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Hidden, Box } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-
+import React from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Hidden,
+  Box,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Link } from "react-router-dom";
 const MenuPage: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -32,14 +42,20 @@ const MenuPage: React.FC = () => {
           </Hidden>
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="h6" component="div" marginRight={"20px"}>
-                Menu Page
+              Menu Page
             </Typography>
           </Box>
           <Hidden mdDown>
-            <Box sx={{ marginRight: 'auto' }}>
-              <Button color="inherit">Option 1</Button>
-              <Button color="inherit">Option 2</Button>
-              <Button color="inherit">Option 3</Button>
+            <Box sx={{ marginRight: "auto" }}>
+              <Button color="inherit" href="/books">
+                Option 1
+              </Button>
+              <Button color="inherit" href="/loans">
+                Option 2
+              </Button>
+              <Button color="inherit" href="/">
+                Option 3
+              </Button>
             </Box>
           </Hidden>
           <Menu
@@ -48,12 +64,12 @@ const MenuPage: React.FC = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
+              vertical: "top",
+              horizontal: "left",
             }}
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
+              vertical: "top",
+              horizontal: "left",
             }}
           >
             <MenuItem onClick={handleClose}>Option 1</MenuItem>

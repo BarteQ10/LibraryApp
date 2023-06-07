@@ -6,11 +6,13 @@ import { Typography, TablePagination  } from '@mui/material';
 import { styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 
-
+const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
 const BooksPage: React.FC = () => {
   const dispatch = useDispatch();
   const books = useSelector((state: RootState) => state.books.books);
+  const loading = useSelector((state: RootState) => state.books.loading);
+  const error = useSelector((state: RootState) => state.books.error);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -48,7 +50,13 @@ const BooksPage: React.FC = () => {
   useEffect(() => {
     dispatch(fetchBooks() as any);
   }, [dispatch]);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
+  if (error) {
+    return <div>{error}</div>;
+  }
   return (
     <div>
       <Typography variant="h5">Strona wyświetlająca książki</Typography>
@@ -77,7 +85,7 @@ const BooksPage: React.FC = () => {
               <StyledTableCell align="right">{book.genre}</StyledTableCell>
               <StyledTableCell align="right">{book.description}</StyledTableCell>
               <StyledTableCell align="right">{book.coverImage ? (
-    <img src={`http://localhost:5041/Images/${book.coverImage}`} height={"50px"} width={"50px"} alt="Book Cover" />
+    <img src={imageUrl+book.coverImage} height={"50px"} width={"50px"} alt="Book Cover" />
   ) : (
     null)}</StyledTableCell>
               <StyledTableCell align="right">{book.isAvailable ? "true" : "false"}</StyledTableCell>
