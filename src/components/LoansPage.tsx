@@ -15,18 +15,14 @@ const LoansPage: React.FC = () => {
     dispatch(fetchLoans() as any);
   }, [dispatch]);
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   return (
-    <div className='gradient-custom min-vh-100'>
+    <div className='gradient-background min-vh-100 ps-2 pe-2'>
       <h5>Loans Page</h5>
+      <select className="form-select-md ms-3 mb-2 bg-info" aria-label="Default select example" onChange={(e) => setRowsPerPage(Number(e.target.value))}>
+        <option value={5} selected>5 Rows</option>
+        <option value={10}>10 Rows</option>
+        <option value={20}>20 Rows</option>
+      </select>
       <Table striped bordered hover>
         <thead>
           <tr>

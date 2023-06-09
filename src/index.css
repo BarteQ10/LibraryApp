@@ -2,7 +2,7 @@ body {
     overflow-x : hidden;
     height:100% !important;
   }
-.gradient-custom {
+.gradient-background {
   /* fallback for old browsers */
   background: #6a11cb;
 
@@ -15,11 +15,17 @@ body {
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   background: linear-gradient(
-    to right,
+    to top,
     rgba(106, 17, 203, 1),
-    rgba(37, 117, 252, 1)
+    rgb(194, 215, 253)
   );
     height:100%;
+}
+.footer {
+  width: 100%;
+  background-color: #6a11cb;
+  color: white;
+  text-align: center;
 }
 .gradientLogo {
   background: linear-gradient(to right, rgb(11, 3, 166), rgb(184, 189, 197));
@@ -37,4 +43,12 @@ body {
 }
 .loginModal {
   animation: fade 1s ease-in 0s;
+}
+.form-select-md {
+  border-radius: 5px;
+  width: 150px;
+  font-size: 1.2rem; 
+  font-weight: 500;
+  line-height: 1.5rem;
+  padding: 0rem 1rem;
 }

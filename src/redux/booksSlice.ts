@@ -2,13 +2,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-interface Book {
+export interface Book {
   id: number;
   title: string;
   author: string;
   genre: string;
   description: string;
   coverImage: string;
+  coverImageFile: File|null;
   isAvailable: boolean;
 }
 
@@ -23,7 +24,7 @@ const initialState: BooksState = {
   loading: false,
   error: null,
 };
-
+const token = localStorage.getItem('token');
 export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   try {
     const response = await axios.get(`${apiUrl}/Books`); 
@@ -33,9 +34,23 @@ export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   }
 });
 
-export const createBook = createAsyncThunk('books/createBook', async (book: Book) => {
+export const createBook = createAsyncThunk('books/createBook', async (book: Book, thunkAPI) => {
   try {
-    const response = await axios.post(`${apiUrl}/Books`, book);
+    const formData = new FormData();
+    formData.append('title', book.title);
+    formData.append('author', book.author);
+    formData.append('genre', book.genre);
+    formData.append('description', book.description);
+    formData.append('isAvailable', book.isAvailable.toString());
+    if (book.coverImageFile) {
+      formData.append('coverImage', book.coverImageFile);
+    }
+    const response = await axios.post(`${apiUrl}/Books`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     throw Error('Nie udało się dodać książki.');
@@ -44,7 +59,21 @@ export const createBook = createAsyncThunk('books/createBook', async (book: Book
 
 export const updateBook = createAsyncThunk('books/updateBook', async (book: Book) => {
   try {
-    const response = await axios.put(`${apiUrl}/Books/${book.id}`, book);
+    const formData = new FormData();
+    formData.append('title', book.title);
+    formData.append('author', book.author);
+    formData.append('genre', book.genre);
+    formData.append('description', book.description);
+    formData.append('isAvailable', book.isAvailable.toString());
+    if (book.coverImageFile) {
+      formData.append('coverImage', book.coverImageFile);
+    }
+    const response = await axios.put(`${apiUrl}/Books/${book.id}`,formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     throw Error('Nie udało się zaktualizować książki.');

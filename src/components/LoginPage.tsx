@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../redux/authSlice';
-import { Button, Form, FloatingLabel, Container, Row, Col } from 'react-bootstrap';
+import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const LoginPage: React.FC = () => {
@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
     window.scrollTo(0, 0);
   }
   return (
-    <section className="h-100 gradient-custom">
+    <section className="h-100 gradient-background">
       <Container className="py-5 h-100">
         <Row className="d-flex justify-content-center align-items-center h-100 loginModal">
           <Col xs={12} md={8} lg={6} xl={5}>
