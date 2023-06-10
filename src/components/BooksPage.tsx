@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
-import { Book, fetchBooks } from "../redux/booksSlice";
+import { fetchBooks, deleteBook } from "../redux/booksSlice";
+import { Book, CreateBookDTO } from "../models/Book";
 import { Table } from "react-bootstrap";
 import { Image } from "react-bootstrap";
 import { Pagination } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import BookModal from "./modals/BookModal";
+import BookModal from "../utils/modals/BookModal";
 import { BsTrashFill, BsPencilFill } from "react-icons/bs";
+import BookDeleteAlert from "../utils/alerts/BookDeleteAlert";
 const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
 const BooksPage: React.FC = () => {
@@ -20,8 +22,25 @@ const BooksPage: React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showModal, setShowModal] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [selectedBook, setSelectedBook] = useState<CreateBookDTO | null>(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState<number | null>(null);
+ 
 
+  const BookDTO =(book: Book) => {
+    const BookDTO: CreateBookDTO = {
+      id: book.id,
+      title: book.title,    
+      author: book.author,
+      genre: book.genre,
+      description: book.description,
+      coverImageFile: null,
+      isAvailable: book.isAvailable,
+    }
+    setSelectedBook(BookDTO);
+    return BookDTO;
+  }
+const handleShowModal = () => setShowModal(true);
   const handleFetchBooks = () => {
     dispatch(fetchBooks() as any);
   };
@@ -41,8 +60,15 @@ const BooksPage: React.FC = () => {
       setSortDirection("asc");
     }
   };
+  const handleDeleteConfirmation = (bookId: number) => {
+    setBookToDelete(bookId);
+    setShowDeleteConfirmation(true);
+  };
 
-  const handleShowModal = () => setShowModal(true);
+  const handleDeleteBook = async (bookId: number) => {
+    await dispatch(deleteBook(bookId) as any);
+    await handleFetchBooks();
+  };
 
   useEffect(() => {
     handleFetchBooks(); // Initial fetchBooks on component mount
@@ -57,7 +83,7 @@ const BooksPage: React.FC = () => {
   }
 
   return (
-    <div className="gradient-background min-vh-100 ps-2 pe-2">
+    <div className="gradient-background min-vh-100 ps-2 pe-2">     
       <h5>Strona wyświetlająca książki</h5>
       <select
         className="form-select-md ms-3 mb-2 bg-info"
@@ -89,15 +115,11 @@ const BooksPage: React.FC = () => {
             .sort((a, b) => {
               const aValue = a[sortColumn as keyof Book];
               const bValue = b[sortColumn as keyof Book];
-
-              if (aValue !== null && bValue !== null) {
                 if (aValue < bValue) {
                   return sortDirection === "asc" ? -1 : 1;
                 } else if (aValue > bValue) {
                   return sortDirection === "asc" ? 1 : -1;
                 }
-              }
-
               return 0;
             })
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -124,13 +146,17 @@ const BooksPage: React.FC = () => {
                     <Button
                       key="edit-button"
                       onClick={() => {
-                        setSelectedBook(book);
+                        setSelectedBook(BookDTO(book));
                         handleShowModal();
                       }}
                     >
                       <BsPencilFill />
                     </Button>
-                    <Button className="btn-danger" key="delete-button">
+                    <Button
+                      className="btn-danger"
+                      key="delete-button"
+                      onClick={() => handleDeleteConfirmation(book.id)}
+                    >
                       <BsTrashFill />
                     </Button>
                   </div>
@@ -169,8 +195,14 @@ const BooksPage: React.FC = () => {
       <BookModal
         showModal={showModal}
         handleCloseModal={handleCloseModal}
-        book={selectedBook}
-      />
+        book={selectedBook} 
+      />  
+      <BookDeleteAlert
+        show={showDeleteConfirmation}
+        bookId={bookToDelete || 0}
+        onClose={() => setShowDeleteConfirmation(false)}
+        onDelete={handleDeleteBook}
+      />    
     </div>
   );
 };

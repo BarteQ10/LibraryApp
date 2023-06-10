@@ -1,17 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { Book, CreateBookDTO } from '../models/Book';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-export interface Book {
-  id: number;
-  title: string;
-  author: string;
-  genre: string;
-  description: string;
-  coverImage: string;
-  coverImageFile: File|null;
-  isAvailable: boolean;
-}
+
 
 interface BooksState {
   books: Book[];
@@ -34,7 +26,7 @@ export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   }
 });
 
-export const createBook = createAsyncThunk('books/createBook', async (book: Book, thunkAPI) => {
+export const createBook = createAsyncThunk('books/createBook', async (book: CreateBookDTO, thunkAPI) => {
   try {
     const formData = new FormData();
     formData.append('title', book.title);
@@ -57,7 +49,7 @@ export const createBook = createAsyncThunk('books/createBook', async (book: Book
   }
 });
 
-export const updateBook = createAsyncThunk('books/updateBook', async (book: Book) => {
+export const updateBook = createAsyncThunk('books/updateBook', async (book: CreateBookDTO) => {
   try {
     const formData = new FormData();
     formData.append('title', book.title);
@@ -82,7 +74,10 @@ export const updateBook = createAsyncThunk('books/updateBook', async (book: Book
 
 export const deleteBook = createAsyncThunk('books/deleteBook', async (bookId: number) => {
   try {
-    await axios.delete(`${apiUrl}/Books/${bookId}`);
+    await axios.delete(`${apiUrl}/Books/${bookId}`,{headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    }});
     return bookId;
   } catch (error) {
     throw Error('Nie udało się usunąć książki.');

@@ -1,12 +1,13 @@
 import { Modal, Form, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Book, createBook, updateBook } from "../../redux/booksSlice";
+import { CreateBookDTO } from "../../models/Book";
+import { createBook, updateBook } from "../../redux/booksSlice";
 
 interface BookModalProps {
   showModal: boolean;
   handleCloseModal: () => void;
-  book?: Book | null; // Pass the book object for editing
+  book?: CreateBookDTO | null; // Pass the book object for editing
 }
 
 const BookModal: React.FC<BookModalProps> = ({
@@ -56,15 +57,14 @@ const BookModal: React.FC<BookModalProps> = ({
     const author = (form.querySelector("#author") as HTMLInputElement).value;
     const genre = (form.querySelector("#genre") as HTMLInputElement).value;
     const description = (form.querySelector("#description") as HTMLTextAreaElement).value;
-    const newBook: Book = {
+    const newBook: CreateBookDTO = {
       id: book ? book.id : 0,
       title: title,
       author: author,
       genre: genre,
       description: description,
-      coverImage: "",
       coverImageFile: coverImage,
-      isAvailable: false,
+      isAvailable: isAvailable,
     };
 
     if (book) {
@@ -118,10 +118,18 @@ const BookModal: React.FC<BookModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
             />
           </Form.Group>
+          <Form.Group controlId="isAvailable">
+            <Form.Label>Is Available</Form.Label>
+            <select className="form-control form-control-sm" value={isAvailable.toString()} onChange={(e) => setIsAvailable(e.target.value === "true")}>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </Form.Group>
           <Form.Group controlId="coverImage">
             <Form.Label>Cover Image</Form.Label>
             <Form.Control type="file" onChange={handleFileChange} />
           </Form.Group>
+          <br />
           <Button variant="primary" type="submit">
             {book ? "Save Changes" : "Add Book"}
           </Button>

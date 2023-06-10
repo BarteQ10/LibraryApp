@@ -1,30 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { Loan } from '../models/Loan';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const token = localStorage.getItem('token');
-interface Loan {
-id: number;
-borrowDate: Date;
-returnDate: Date;
-isReturned: boolean;
-book: Book;
-user: User;
-}
-interface Book {
-id: number;
-title: string;
-author: string;
-genre: string;
-description: string;
-coverImage: string;
-isAvailable: boolean;
-}
-interface User {
-id: number;
-email: string;
-role: string;
-}
+
 interface LoansState {
 loans: Loan[];
 loading: boolean;

@@ -2,10 +2,11 @@ import React from 'react';
 import LoginPage from './components/LoginPage';
 import BooksPage from './components/BooksPage';
 import LoansPage from './components/LoansPage';
-import MenuPage from './components/utility/MenuPage';
+import MenuPage from './utils/MenuPage';
+
 //import ProfilePage from './components/ProfilePage';
 import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-router-dom';
-import Footer from './components/utility/Footer';
+import Footer from './utils/Footer';
 
 const App: React.FC = () => {
   return (
