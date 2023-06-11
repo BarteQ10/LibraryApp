@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { Loan } from '../models/Loan';
+import { Loan, CreateLoanDTO, EndLoanDTO } from '../models/Loan';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const token = localStorage.getItem('token');
@@ -30,9 +30,25 @@ throw Error('Nie udało się pobrać listy wypożyczeń.');
 
 export const createLoan = createAsyncThunk(
   'loans/createLoan',
-  async (loan: Loan, { rejectWithValue }) => {
+  async (loan: CreateLoanDTO, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${apiUrl}/Loans`, loan, {
+      const response = await axios.post(`${apiUrl}/loans/create`, loan, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue('Nie udało się utworzyć wypożyczenia.');
+    }
+  }
+);
+
+export const endLoan = createAsyncThunk(
+  'loans/end',
+  async (loan: EndLoanDTO, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${apiUrl}/loans/end`, loan, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

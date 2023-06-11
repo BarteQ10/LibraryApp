@@ -8,3 +8,14 @@ export interface Loan {
   book: Book;
   user: User;
 }
+
+export interface CreateLoanDTO {
+  bookId: number;
+  userId: number;
+  borrowDate: Date;
+}
+
+export interface EndLoanDTO {
+  loanId: number;
+  returnDate: Date;
+}

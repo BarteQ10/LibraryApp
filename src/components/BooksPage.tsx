@@ -40,7 +40,7 @@ const BooksPage: React.FC = () => {
     setSelectedBook(BookDTO);
     return BookDTO;
   }
-const handleShowModal = () => setShowModal(true);
+  const handleShowModal = () => setShowModal(true);
   const handleFetchBooks = () => {
     dispatch(fetchBooks() as any);
   };
@@ -75,11 +75,11 @@ const handleShowModal = () => setShowModal(true);
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="gradient-background min-vh-100 ps-2 pe-2">Loading...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="gradient-background min-vh-100 ps-2 pe-2">{error}</div>;
   }
 
   return (
