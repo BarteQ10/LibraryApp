@@ -2,15 +2,6 @@ import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 
 const MenuPage: React.FC = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <div>
@@ -22,7 +13,7 @@ const MenuPage: React.FC = () => {
             <Nav className="me-auto">
               <Nav.Link href="/books">Books</Nav.Link>
               <Nav.Link href="/loans">Loans</Nav.Link>
-              {/* <Nav.Link href="/profile">Profile</Nav.Link> */}
+              <Nav.Link href="/users">Users</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </div>

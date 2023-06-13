@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
-import { fetchLoans, createLoan, endLoan } from "../redux/loansSlice";
+import {
+  fetchLoans,
+  createLoan,
+  endLoan,
+  deleteLoan,
+} from "../redux/loansSlice";
 import { Table } from "react-bootstrap";
 import { Pagination } from "react-bootstrap";
 import { Loan, CreateLoanDTO, EndLoanDTO } from "../models/Loan";
@@ -9,6 +14,7 @@ import { Button } from "react-bootstrap";
 import { BsTrashFill, BsCheck2 } from "react-icons/bs";
 import LoanReturnAlert from "../utils/alerts/LoanReturnAlert";
 import LoanBorrowAlert from "../utils/alerts/LoanBorrowAlert";
+import LoanDeleteAlert from "../utils/alerts/LoanDeleteAlert";
 
 const LoansPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -27,7 +33,7 @@ const LoansPage: React.FC = () => {
 
   useEffect(() => {
     handleFetchLoans();
-  }, []);
+  }, [dispatch]);
   const CreateLoanDTO = (loan: Loan) => {
     const CreateLoanDTO: CreateLoanDTO = {
       bookId: loan.book.id,
@@ -46,9 +52,8 @@ const LoansPage: React.FC = () => {
   const handleFetchLoans = async () => {
     dispatch(fetchLoans() as any);
   };
-  const handleDeleteConfirmation = (loanId: number) => {
+  const handleDeleteConfirmation = (loan: Loan) => {
     setShowDeleteConfirmation(true);
-    console.log(loanId);
   };
   const handleBorrowConfirmation = async (loan: Loan) => {
     setShowBorrowConfirmation(true);
@@ -66,8 +71,8 @@ const LoansPage: React.FC = () => {
     await dispatch(endLoan(EndLoanDTO(loan)) as any);
     await handleFetchLoans();
   };
-  const handleDeleteLoan = async (bookId: number) => {
-    // await dispatch(deleteBook(bookId) as any);
+  const handleDeleteLoan = async (loanId: number) => {
+    await dispatch(deleteLoan(loanId) as any);
     await handleFetchLoans();
   };
   const handleSort = (column: string) => {
@@ -97,11 +102,10 @@ const LoansPage: React.FC = () => {
       <select
         className="form-select-md ms-3 mb-2 bg-info"
         aria-label="Default select example"
+        value={rowsPerPage}
         onChange={(e) => setRowsPerPage(Number(e.target.value))}
       >
-        <option value={5} selected>
-          5 Rows
-        </option>
+        <option value={5}>5 Rows</option>
         <option value={10}>10 Rows</option>
         <option value={20}>20 Rows</option>
         <option value={loans.length}>All Rows</option>
@@ -214,7 +218,7 @@ const LoansPage: React.FC = () => {
                       key="delete-button"
                       onClick={() => {
                         setSelectedLoan(loan);
-                        handleDeleteConfirmation(loan.id);
+                        handleDeleteConfirmation(loan);
                       }}
                     >
                       <BsTrashFill />
@@ -256,6 +260,12 @@ const LoansPage: React.FC = () => {
             loan={selectedLoan}
             onClose={() => setShowBorrowConfirmation(false)}
             onBorrow={handleBorrow}
+          />
+          <LoanDeleteAlert
+            show={showDeleteConfirmation}
+            loan={selectedLoan}
+            onClose={() => setShowDeleteConfirmation(false)}
+            onDelete={() => handleDeleteLoan(selectedLoan?.id)}
           />
         </div>
       ) : null}

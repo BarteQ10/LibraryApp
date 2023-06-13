@@ -3,26 +3,26 @@ import LoginPage from './components/LoginPage';
 import BooksPage from './components/BooksPage';
 import LoansPage from './components/LoansPage';
 import MenuPage from './utils/MenuPage';
-
-//import ProfilePage from './components/ProfilePage';
-import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-router-dom';
 import Footer from './utils/Footer';
+import UsersPage from './components/UsersPage';
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 const App: React.FC = () => {
   return (
     <div>
-    <MenuPage/>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/books" element={<BooksPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/loans" element={<LoansPage />} />
-        {/* <Route path="/profile" element={<ProfilePage />} /> */}
-        {/* Add more routes */}
-      </Routes>
-      </BrowserRouter>
-    <Footer/>
+      <Router>
+        <MenuPage />
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/books" element={<BooksPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/loans" element={<LoansPage />} />
+          <Route path="/users" element={<UsersPage />} />
+          {/* Add more routes */}
+        </Routes>
+        <Footer />
+      </Router>
     </div>
   );
 };

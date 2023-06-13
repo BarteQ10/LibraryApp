@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Loan, CreateLoanDTO, EndLoanDTO } from '../models/Loan';
+import jwt_decode from 'jwt-decode';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 const token = localStorage.getItem('token');
@@ -18,14 +19,28 @@ error: null,
 
 export const fetchLoans = createAsyncThunk('loans/fetchLoans', async () => {
 try {
-const response = await axios.get(`${apiUrl}/Loans`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },});
-return response.data;
-} catch (error) {
-throw Error('Nie udało się pobrać listy wypożyczeń.');
-}
+  const decodedToken: any = jwt_decode(token||"");
+    const currentTime = Date.now() / 1000;
+    if (decodedToken.exp < currentTime) {
+      await refresh(); 
+      const updatedToken = localStorage.getItem('token');
+      const response = await axios.get(`${apiUrl}/Loans`, {
+        headers: {
+          Authorization: `Bearer ${updatedToken}`,
+        },
+      });
+      return response.data;
+    } else {
+      const response = await axios.get(`${apiUrl}/Loans`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    }
+  } catch (error) {
+    throw new Error('Nie udało się pobrać listy wypożyczeń.');
+  }
 });
 
 export const createLoan = createAsyncThunk(
@@ -105,3 +120,24 @@ const loansSlice = createSlice({
   },
 });
 export default loansSlice.reducer;
+async function refresh() {
+  try {
+    const response = await axios.post(
+      `${apiUrl}/Account/refresh`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log('Token został odświeżony'+ response.data);
+    localStorage.setItem('token', response.data);
+    return response.data;
+  } catch (error) {
+    console.log('Błąd odświeżenia tokenu', error);
+    throw error; // Rethrow the error to handle it in the calling code
+  }
+}
+
