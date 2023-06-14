@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginPage from './components/LoginPage';
-import BooksPage from './components/BooksPage';
+import BooksPage from './components/Books/BooksPage';
 import LoansPage from './components/Loans/LoansPage';
 import MenuPage from './utils/MenuPage';
 import Footer from './utils/Footer';

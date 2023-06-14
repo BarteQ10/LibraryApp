@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../redux/store";
-import { fetchBooks, deleteBook } from "../redux/booksSlice";
-import { Book, CreateBookDTO } from "../models/Book";
+import { RootState } from "../../redux/store";
+import { fetchBooks, deleteBook } from "../../redux/booksSlice";
+import { Book, CreateBookDTO } from "../../models/Book";
 import { Table } from "react-bootstrap";
 import { Image } from "react-bootstrap";
 import { Pagination } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import BookModal from "../utils/modals/BookModal";
+import BookModal from "../../utils/modals/BookModal";
 import { BsTrashFill, BsPencilFill } from "react-icons/bs";
-import BookDeleteAlert from "../utils/alerts/BookDeleteAlert";
+import BookDeleteAlert from "../../utils/alerts/BookDeleteAlert";
+import RowsPerPageSelect from "../RowsPerPageSelect";
+import PaginationBar from "../PaginationBar";
+import BooksTable from "./BooksTable";
 const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
 const BooksPage: React.FC = () => {
@@ -19,27 +22,26 @@ const BooksPage: React.FC = () => {
   const error = useSelector((state: RootState) => state.books.error);
   const [sortColumn, setSortColumn] = useState("id");
   const [sortDirection, setSortDirection] = useState("asc");
-  const [page, setPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState<CreateBookDTO | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
- 
 
-  const BookDTO =(book: Book) => {
+  const BookDTO = (book: Book) => {
     const BookDTO: CreateBookDTO = {
       id: book.id,
-      title: book.title,    
+      title: book.title,
       author: book.author,
       genre: book.genre,
       description: book.description,
       coverImageFile: null,
       isAvailable: book.isAvailable,
-    }
+    };
     setSelectedBook(BookDTO);
     return BookDTO;
-  }
+  };
   const handleShowModal = () => setShowModal(true);
   const handleFetchBooks = () => {
     dispatch(fetchBooks() as any);
@@ -73,30 +75,81 @@ const BooksPage: React.FC = () => {
   useEffect(() => {
     handleFetchBooks(); // Initial fetchBooks on component mount
   }, []);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   if (loading) {
-    return <div className="gradient-background min-vh-100 ps-2 pe-2">Loading...</div>;
+    return (
+      <div className="gradient-background min-vh-100 ps-2 pe-2">Loading...</div>
+    );
   }
 
   if (error) {
-    return <div className="gradient-background min-vh-100 ps-2 pe-2">{error}</div>;
+    return (
+      <div className="gradient-background min-vh-100 ps-2 pe-2">{error}</div>
+    );
   }
 
   return (
-    <div className="gradient-background min-vh-100 ps-2 pe-2">     
+    <div className="gradient-background min-vh-100 ps-2 pe-2">
       <h5>Strona wyświetlająca książki</h5>
-      <select
-        className="form-select-md ms-3 mb-2 bg-info"
-        aria-label="Default select example"
-        onChange={(e) => setRowsPerPage(Number(e.target.value))}
-        value={rowsPerPage}
+      <RowsPerPageSelect
+        rowsPerPage={rowsPerPage}
+        setRowsPerPage={setRowsPerPage}
+        totalRows={books.length}
+      />
+      <BooksTable
+        books={books}
+        currentPage={0} // Provide the appropriate current page value
+        rowsPerPage={10} // Provide the appropriate number of rows per page       
+        handleDeleteConfirmation={(bookId: number) => {
+          // Implement the handleDeleteConfirmation function
+          console.log("Delete confirmation for book ID:", bookId);
+        }}
+        setSelectedBook={(book: Book | null) => {
+          // Implement the setSelectedBook function
+          console.log("Selected book:", book);
+        }}
+        handleShowModal={() => {
+          // Implement the handleShowModal function
+          console.log("Showing modal");
+        }}
+        imageUrl={imageUrl||""}
+      />
+      <Button
+        variant="primary"
+        onClick={() => {
+          setSelectedBook(null);
+          handleShowModal();
+        }}
       >
-        <option value={5}>5 Rows</option>
-        <option value={10}>10 Rows</option>
-        <option value={20}>20 Rows</option>
-        <option value={books.length}>All Rows</option>
-      </select>
-      <Table striped bordered hover>
+        Add Book
+      </Button>
+      <PaginationBar
+        currentPage={currentPage}
+        totalPages={Math.ceil(books.length / rowsPerPage)}
+        onPageChange={handlePageChange}
+      />
+      <BookModal
+        showModal={showModal}
+        handleCloseModal={handleCloseModal}
+        book={selectedBook}
+      />
+      <BookDeleteAlert
+        show={showDeleteConfirmation}
+        bookId={bookToDelete || 0}
+        onClose={() => setShowDeleteConfirmation(false)}
+        onDelete={handleDeleteBook}
+      />
+    </div>
+  );
+};
+
+export default BooksPage;
+
+{
+  /* <Table striped bordered hover>
         <thead>
           <tr>
             <th onClick={() => handleSort("id")}>Id</th>
@@ -122,7 +175,7 @@ const BooksPage: React.FC = () => {
                 }
               return 0;
             })
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage)
             .map((book) => (
               <tr key={book.id}>
                 <td>{book.id}</td>
@@ -164,47 +217,5 @@ const BooksPage: React.FC = () => {
               </tr>
             ))}
         </tbody>
-      </Table>
-      <Button
-        variant="primary"
-        onClick={() => {
-          setSelectedBook(null);
-          handleShowModal();
-        }}
-      >
-        Add Book
-      </Button>
-      <Pagination className="pb-0 mb-0 justify-content-center">
-        <Pagination.First onClick={() => setPage(0)} disabled={page === 0} />
-        <Pagination.Prev
-          onClick={() => setPage(page - 1)}
-          disabled={page === 0}
-        />
-        <Pagination.Item onClick={() => setPage(page)} active>
-          {page + 1}
-        </Pagination.Item>
-        <Pagination.Next
-          onClick={() => setPage(page + 1)}
-          disabled={page === Math.ceil(books.length / rowsPerPage) - 1}
-        />
-        <Pagination.Last
-          onClick={() => setPage(Math.ceil(books.length / rowsPerPage) - 1)}
-          disabled={page === Math.ceil(books.length / rowsPerPage) - 1}
-        />
-      </Pagination>
-      <BookModal
-        showModal={showModal}
-        handleCloseModal={handleCloseModal}
-        book={selectedBook} 
-      />  
-      <BookDeleteAlert
-        show={showDeleteConfirmation}
-        bookId={bookToDelete || 0}
-        onClose={() => setShowDeleteConfirmation(false)}
-        onDelete={handleDeleteBook}
-      />    
-    </div>
-  );
-};
-
-export default BooksPage;
+      </Table> */
+}
