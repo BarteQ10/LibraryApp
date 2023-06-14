@@ -6,7 +6,7 @@ interface LoanDeleteAlertProps {
   show: boolean;
   loan: Loan;
   onClose: () => void;
-  onDelete: (loanId: number | null) => void;
+  onDelete: (loanId: number) => void;
 }
 
 const LoanDeleteAlert: React.FC<LoanDeleteAlertProps> = ({
@@ -16,7 +16,7 @@ const LoanDeleteAlert: React.FC<LoanDeleteAlertProps> = ({
   onDelete,
 }) => {
   const handleDelete = async () => {
-    onDelete(loan ? loan.id : null);
+    onDelete(loan.id);
     onClose();
   };
 

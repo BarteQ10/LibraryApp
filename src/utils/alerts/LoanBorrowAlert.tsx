@@ -6,7 +6,7 @@ interface LoanBorrowAlertProps {
   show: boolean;
   loan: Loan;
   onClose: () => void;
-  onBorrow: (loanId: Loan) => void;
+  onBorrow: (loan: Loan) => void; // Update the parameter type to 'loan: Loan'
 }
 
 const LoanBorrowAlert: React.FC<LoanBorrowAlertProps> = ({
