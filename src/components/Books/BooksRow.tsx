@@ -10,18 +10,18 @@ type BooksRowProps = {
   handleShowModal: () => void;
   imageUrl: string;
 };
-const BookDTO =(book: Book) => {
-    const BookDTO: CreateBookDTO = {
-      id: book.id,
-      title: book.title,    
-      author: book.author,
-      genre: book.genre,
-      description: book.description,
-      coverImageFile: null,
-      isAvailable: book.isAvailable,
-    }
-    return BookDTO;
-  }
+const BookDTO = (book: Book) => {
+  const BookDTO: CreateBookDTO = {
+    id: book.id,
+    title: book.title,
+    author: book.author,
+    genre: book.genre,
+    description: book.description,
+    coverImageFile: null,
+    isAvailable: book.isAvailable,
+  };
+  return BookDTO;
+};
 const BooksRow: React.FC<BooksRowProps> = ({
   book,
   handleDeleteConfirmation,
@@ -52,10 +52,7 @@ const BooksRow: React.FC<BooksRowProps> = ({
           <Button
             key="edit-button"
             onClick={() => {
-            setSelectedBook({
-                ...BookDTO(book),
-                coverImage: book.coverImage
-            } as Book);
+              setSelectedBook(book);
               handleShowModal();
             }}
           >

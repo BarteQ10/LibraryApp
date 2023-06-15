@@ -42,19 +42,6 @@ const [sortColumn, setSortColumn] = useState<string>("id");
       setSortDirection("asc");
     }
   };
-
-  const sortedLoans = [...books].sort((a, b) => {
-    const columnA = getColumnValue(a, sortColumn);
-    const columnB = getColumnValue(b, sortColumn);
-
-    if (columnA < columnB) {
-      return sortDirection === "asc" ? -1 : 1;
-    }
-    if (columnA > columnB) {
-      return sortDirection === "asc" ? 1 : -1;
-    }
-    return 0;
-  });
   return (
     <Table striped bordered hover>
       <thead>

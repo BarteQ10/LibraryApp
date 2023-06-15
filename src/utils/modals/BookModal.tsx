@@ -30,12 +30,14 @@ const BookModal: React.FC<BookModalProps> = ({
       setAuthor(book.author);
       setGenre(book.genre);
       setDescription(book.description);
+      setIsAvailable(book.isAvailable !== undefined ? book.isAvailable : true);
     } else {
       // Clear form fields when adding a new book
       setTitle("");
       setAuthor("");
       setGenre("");
       setDescription("");
+      setIsAvailable(true);
     }
   }, [book]);
 
@@ -56,7 +58,9 @@ const BookModal: React.FC<BookModalProps> = ({
     const title = (form.querySelector("#title") as HTMLInputElement).value;
     const author = (form.querySelector("#author") as HTMLInputElement).value;
     const genre = (form.querySelector("#genre") as HTMLInputElement).value;
-    const description = (form.querySelector("#description") as HTMLTextAreaElement).value;
+    const description = (
+      form.querySelector("#description") as HTMLTextAreaElement
+    ).value;
     const newBook: CreateBookDTO = {
       id: book ? book.id : 0,
       title: title,
@@ -120,7 +124,11 @@ const BookModal: React.FC<BookModalProps> = ({
           </Form.Group>
           <Form.Group controlId="isAvailable">
             <Form.Label>Is Available</Form.Label>
-            <select className="form-control form-control-sm" value={isAvailable.toString()} onChange={(e) => setIsAvailable(e.target.value === "true")}>
+            <select
+              className="form-control form-control-sm"
+              value={isAvailable.toString()}
+              onChange={(e) => setIsAvailable(e.target.value === "true")}
+            >
               <option value="true">Yes</option>
               <option value="false">No</option>
             </select>
