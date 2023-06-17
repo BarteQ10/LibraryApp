@@ -30,21 +30,6 @@ const authSlice = createSlice({
           console.log('Błąd logowania:', error);
         });
     },
-    // refresh: (state, action:PayloadAction) => {
-    //   const token = localStorage.getItem('token');
-
-    //   axios.put(`${apiUrl}/Account/refresh`, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   })
-    //     .then(response => {
-    //       console.log('Token został odświeżony');
-    //     })
-    //     .catch(error => {
-    //       console.log('Błąd odświeżenia tokenu', error);
-    //     });
-    // },
     logout: (state) => {
       localStorage.removeItem('token');
       state.isAuthenticated = false;

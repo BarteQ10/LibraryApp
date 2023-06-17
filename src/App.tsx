@@ -4,7 +4,7 @@ import BooksPage from './components/Books/BooksPage';
 import LoansPage from './components/Loans/LoansPage';
 import MenuPage from './utils/MenuPage';
 import Footer from './utils/Footer';
-import UsersPage from './components/UsersPage';
+import UsersPage from './components/Users/UsersPage';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 

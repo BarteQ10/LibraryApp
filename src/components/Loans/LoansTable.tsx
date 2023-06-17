@@ -8,7 +8,7 @@ interface LoansTableProps {
   loans: Loan[];
   onBorrow: (loan: Loan) => void; // Update the parameter type to 'loan: Loan'
   onReturn: (loan: Loan) => void;
-  onDelete: (loan: Loan) => void;
+  onDelete: (loanId: Loan) => void;
 }
 
 const LoansTable: React.FC<LoansTableProps> = ({
@@ -56,10 +56,10 @@ const LoansTable: React.FC<LoansTableProps> = ({
       <thead>
         <tr>
           <th onClick={() => handleSort("id")}>Id</th>
-          <th onClick={() => handleSort("book.title")}>Title</th>
           <th onClick={() => handleSort("user.email")} align="right">
             User Email
           </th>
+          <th onClick={() => handleSort("book.title")}>Title</th>         
           <th onClick={() => handleSort("borrowDate")} align="right">
             Borrow Date
           </th>

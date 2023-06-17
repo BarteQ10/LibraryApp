@@ -16,6 +16,11 @@ loans: [],
 loading: false,
 error: null,
 };
+type Payload = {
+  id: number,
+  date: Date,
+}
+
 
 export const fetchLoans = createAsyncThunk('loans/fetchLoans', async () => {
 try {
@@ -59,18 +64,34 @@ export const createLoan = createAsyncThunk(
   }
 );
 
-export const endLoan = createAsyncThunk(
-  'loans/end',
-  async (loan: EndLoanDTO, { rejectWithValue }) => {
+export const startLoan = createAsyncThunk(
+  'loans/borrow',
+  async ({ id, date }: Payload, thunkAPI) => {
     try {
-      const response = await axios.post(`${apiUrl}/loans/end`, loan, {
+      const response = await axios.put(`${apiUrl}/loans/borrow/` + id, date, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue('Nie udało się utworzyć wypożyczenia.');
+      return thunkAPI.rejectWithValue('Nie udało się zakończyć wypożyczenia.');
+    }
+  }
+);
+
+export const endLoan = createAsyncThunk(
+  'loans/end',
+  async ({ id, date }: Payload, thunkAPI) => {
+    try {
+      const response = await axios.put(`${apiUrl}/loans/end/` + id, date, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Nie udało się zakończyć wypożyczenia.');
     }
   }
 );
