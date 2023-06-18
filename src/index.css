@@ -62,3 +62,23 @@ body {
   width: 100%;
   max-width: 500px;
 }
+
+.card-img-custom {
+  height: 250px;
+  width: 200px;
+  margin: auto;
+  display: block;
+  padding: 10px;
+  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.2); 
+  border-radius: 10%;
+}
+
+.card-text-custom {
+  min-height: 150px;  
+}
+
+.card-custom {
+  background-color: #ebe1e1;  
+  border-radius: 15px;  
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);  
+}

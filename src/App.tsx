@@ -7,6 +7,7 @@ import Footer from './utils/Footer';
 import UsersPage from './components/Users/UsersPage';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import BooksUsersPage from './components/Books/BooksUsersPage';
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/books" element={<BooksPage />} />
+          <Route path="/books2" element={<BooksUsersPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/loans" element={<LoansPage />} />
           <Route path="/users" element={<UsersPage />} />
