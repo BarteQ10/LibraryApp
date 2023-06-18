@@ -48,8 +48,21 @@ const BooksRow: React.FC<BooksRowProps> = ({
       </td>
       <td>{book.isAvailable ? "true" : "false"}</td>
       <td>
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "10px",
+            width: "150px",
+          }}
+        >
           <Button
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "70px",
+            }}
             key="edit-button"
             onClick={() => {
               setSelectedBook(book);
@@ -57,13 +70,21 @@ const BooksRow: React.FC<BooksRowProps> = ({
             }}
           >
             <BsPencilFill />
+            <span>Edit</span>
           </Button>
           <Button
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "70px",
+            }}
             className="btn-danger"
             key="delete-button"
             onClick={() => handleDeleteConfirmation(book.id)}
           >
             <BsTrashFill />
+            <span>Delete</span>
           </Button>
         </div>
       </td>

@@ -1,24 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table } from "react-bootstrap";
 import { Loan } from "../../models/Loan";
 import LoanRow from "./LoanRow";
-import { Dispatch } from "@reduxjs/toolkit";
 
 interface LoansTableProps {
   loans: Loan[];
-  onBorrow: (loan: Loan) => void; // Update the parameter type to 'loan: Loan'
+  currentPage: number;
+  rowsPerPage: number;
+  onBorrow: (loan: Loan) => void;
   onReturn: (loan: Loan) => void;
   onDelete: (loanId: Loan) => void;
 }
 
 const LoansTable: React.FC<LoansTableProps> = ({
   loans,
+  currentPage,
+  rowsPerPage,
   onBorrow,
   onReturn,
   onDelete,
 }) => {
   const [sortColumn, setSortColumn] = useState<string>("id");
   const [sortDirection, setSortDirection] = useState<string>("asc");
+
+  useEffect(() => {
+    const savedSortColumn = localStorage.getItem("loanSortColumn");
+    const savedSortDirection = localStorage.getItem("loanSortDirection");
+    if (savedSortColumn) setSortColumn(savedSortColumn);
+    if (savedSortDirection) setSortDirection(savedSortDirection);
+  }, []);
 
   const getColumnValue = (obj: any, column: string) => {
     const properties = column.split(".");
@@ -32,9 +42,12 @@ const LoansTable: React.FC<LoansTableProps> = ({
   const handleSort = (column: string) => {
     if (column === sortColumn) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      localStorage.setItem("loanSortDirection", sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortColumn(column);
+      localStorage.setItem("loanSortColumn", column);
       setSortDirection("asc");
+      localStorage.setItem("loanSortDirection", "asc");
     }
   };
 
@@ -50,6 +63,10 @@ const LoansTable: React.FC<LoansTableProps> = ({
     }
     return 0;
   });
+
+  // Pagination
+  const startIndex = (currentPage) * rowsPerPage;
+  const paginatedLoans = sortedLoans.slice(startIndex, startIndex + rowsPerPage);
 
   return (
     <Table striped bordered hover>
@@ -73,14 +90,13 @@ const LoansTable: React.FC<LoansTableProps> = ({
         </tr>
       </thead>
       <tbody>
-        {sortedLoans.map((loan) => (
+        {paginatedLoans.map((loan) => (
           <LoanRow
             key={loan.id}
             loan={loan}
             onBorrowConfirmation={() => onBorrow(loan)}
             onReturnConfirmation={onReturn}
             onDeleteConfirmation={() => onDelete(loan)}
-            //onSort={handleSort}
           />
         ))}
       </tbody>

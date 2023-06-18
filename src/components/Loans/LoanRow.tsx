@@ -20,7 +20,7 @@ const LoanRow: React.FC<LoanRowProps> = ({
     <tr>
       <td>{loan.id}</td>
       <td align="right">{loan.user.email}</td>
-      <td>{loan.book.title}</td> 
+      <td>{loan.book.title}</td>
       <td align="right">
         {loan.borrowDate ? new Date(loan.borrowDate).toUTCString() : null}
       </td>
@@ -29,9 +29,22 @@ const LoanRow: React.FC<LoanRowProps> = ({
       </td>
       <td align="right">{loan.isReturned ? "Yes" : "No"}</td>
       <td>
-        <div style={{ display: "flex", gap: "10px", alignContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "10px",
+            width: "150px",
+          }}
+        >
           {!loan.borrowDate ? (
             <Button
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "70px",
+              }}
               className="btn-success"
               onClick={() => onBorrowConfirmation(loan)}
             >
@@ -41,6 +54,12 @@ const LoanRow: React.FC<LoanRowProps> = ({
           ) : null}
           {!loan.returnDate && loan.borrowDate ? (
             <Button
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "70px",
+              }}
               className="btn-success"
               onClick={() => onReturnConfirmation(loan)}
             >
@@ -50,6 +69,12 @@ const LoanRow: React.FC<LoanRowProps> = ({
           ) : null}
 
           <Button
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "70px",
+            }}
             className="btn-danger"
             onClick={() => onDeleteConfirmation(loan.id)}
           >

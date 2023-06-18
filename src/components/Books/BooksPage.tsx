@@ -9,6 +9,7 @@ import BookDeleteAlert from "../../utils/alerts/BookDeleteAlert";
 import RowsPerPageSelect from "../RowsPerPageSelect";
 import PaginationBar from "../PaginationBar";
 import BooksTable from "./BooksTable";
+import { BsPlusCircle } from "react-icons/bs";
 const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
 const BooksPage: React.FC = () => {
@@ -25,7 +26,7 @@ const BooksPage: React.FC = () => {
 
   const BookDTO = (book: Book | null): CreateBookDTO | null => {
     if (!book) return null;
-    
+
     const BookDTO: CreateBookDTO = {
       id: book.id,
       title: book.title,
@@ -92,16 +93,22 @@ const BooksPage: React.FC = () => {
         handleDeleteConfirmation={handleDeleteConfirmation}
         setSelectedBook={setSelectedBook}
         handleShowModal={handleShowModal}
-        imageUrl={imageUrl||""}
+        imageUrl={imageUrl || ""}
       />
       <Button
-        variant="primary"
+        variant="success"
         onClick={() => {
           setSelectedBook(null);
           handleShowModal();
         }}
+        style={{
+          flexDirection: "column",
+          display: "flex",
+          alignItems: "center",
+        }}
       >
-        Add Book
+        <BsPlusCircle />
+        <span>Add Book</span>
       </Button>
       <PaginationBar
         currentPage={currentPage}

@@ -93,7 +93,9 @@ const LoansPage: React.FC = () => {
         loans={loans}
         onBorrow={handleBorrow}
         onReturn={handleReturn}
-        onDelete={handleDeleteLoan}
+        onDelete={handleDeleteLoan} 
+        currentPage={currentPage} 
+        rowsPerPage={rowsPerPage}      
       />
       {selectedLoan && (
         <>
