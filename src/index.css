@@ -82,3 +82,17 @@ body {
   border-radius: 15px;  
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);  
 }
+
+.arrow-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  padding-right: 2rem; /* Adjust the padding as needed */
+}
+
+.alert-fixed-top {
+  width: 100%;
+  z-index: 1030; /* To ensure it appears on top of other elements */
+}

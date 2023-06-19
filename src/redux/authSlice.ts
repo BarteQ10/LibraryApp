@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const apiUrl = process.env.REACT_APP_API_URL;
+import api from "../services/api";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -16,7 +14,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action: PayloadAction<{ email: string; password: string }>) => {
-      axios.post(`${apiUrl}/Account/login`, {
+      api.post(`/Account/login`, {
         email: action.payload.email,
         password: action.payload.password,
       })
@@ -37,7 +35,7 @@ const authSlice = createSlice({
     changePassword: (state, action: PayloadAction<{ currentPassword: string; newPassword: string }>) => {
       const token = localStorage.getItem('token');
 
-      axios.put(`${apiUrl}/Account/changePassword`, {
+      api.put(`/Account/changePassword`, {
         currentPassword: action.payload.currentPassword,
         newPassword: action.payload.newPassword,
       }, {
@@ -53,7 +51,7 @@ const authSlice = createSlice({
         });
     },
     register: (state, action: PayloadAction<{ email: string; password: string; confirmPassword: string}>) => {
-      axios.post(`${apiUrl}/Account/register`, {
+      api.post(`/Account/register`, {
         email: action.payload.email,
         password: action.payload.password,
         confirmPassword: action.payload.confirmPassword,

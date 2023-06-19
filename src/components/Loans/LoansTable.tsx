@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Table } from "react-bootstrap";
 import { Loan } from "../../models/Loan";
 import LoanRow from "./LoanRow";
@@ -30,16 +30,16 @@ const LoansTable: React.FC<LoansTableProps> = ({
     if (savedSortDirection) setSortDirection(savedSortDirection);
   }, []);
 
-  const getColumnValue = (obj: any, column: string) => {
+  const getColumnValue = useCallback((obj: any, column: string) => {
     const properties = column.split(".");
     let value = obj;
     for (const prop of properties) {
       value = value[prop];
     }
     return value;
-  };
+  }, []);
 
-  const handleSort = (column: string) => {
+  const handleSort = useCallback((column: string) => {
     if (column === sortColumn) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
       localStorage.setItem("loanSortDirection", sortDirection === "asc" ? "desc" : "asc");
@@ -49,12 +49,18 @@ const LoansTable: React.FC<LoansTableProps> = ({
       setSortDirection("asc");
       localStorage.setItem("loanSortDirection", "asc");
     }
-  };
+  }, [sortColumn, sortDirection]);
 
   const sortedLoans = [...loans].sort((a, b) => {
-    const columnA = getColumnValue(a, sortColumn);
-    const columnB = getColumnValue(b, sortColumn);
-
+    let columnA = getColumnValue(a, sortColumn);
+    let columnB = getColumnValue(b, sortColumn);
+  
+    // Convert dates to timestamps for comparison
+    if (sortColumn === "borrowDate" || sortColumn === "returnDate") {
+      columnA = columnA ? new Date(columnA).getTime() : Infinity;  // Treat null as largest possible value
+      columnB = columnB ? new Date(columnB).getTime() : Infinity;
+    }
+  
     if (columnA < columnB) {
       return sortDirection === "asc" ? -1 : 1;
     }
@@ -80,7 +86,7 @@ const LoansTable: React.FC<LoansTableProps> = ({
           <th onClick={() => handleSort("borrowDate")} align="right">
             Borrow Date
           </th>
-          <th onClick={() => handleSort("returnedDate")} align="right">
+          <th onClick={() => handleSort("returnDate")} align="right">
             Returned Date
           </th>
           <th onClick={() => handleSort("isReturned")} align="right">

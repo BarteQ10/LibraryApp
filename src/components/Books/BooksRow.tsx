@@ -10,18 +10,7 @@ type BooksRowProps = {
   handleShowModal: () => void;
   imageUrl: string;
 };
-const BookDTO = (book: Book) => {
-  const BookDTO: CreateBookDTO = {
-    id: book.id,
-    title: book.title,
-    author: book.author,
-    genre: book.genre,
-    description: book.description,
-    coverImageFile: null,
-    isAvailable: book.isAvailable,
-  };
-  return BookDTO;
-};
+
 const BooksRow: React.FC<BooksRowProps> = ({
   book,
   handleDeleteConfirmation,

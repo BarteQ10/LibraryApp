@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../services/api";
 import { User } from "../models/User";
 
-const apiUrl = process.env.REACT_APP_API_URL;
 const token = localStorage.getItem("token");
 
 interface UsersState {
@@ -22,7 +21,7 @@ type Payload = {
 }
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   try {
-    const response = await axios.get(`${apiUrl}/Account/all-users`, {
+    const response = await api.get(`/Account/all-users`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -37,8 +36,8 @@ export const setUserStatus = createAsyncThunk(
   "users/setUserStatus",
   async ({ id, active }: Payload, thunkAPI) => {
     try {
-      const response = await axios.put(
-        `${apiUrl}/Account/set-account-status/${id}`,
+      const response = await api.put(
+        `/Account/set-account-status/${id}`,
         active,
         {
           headers: {

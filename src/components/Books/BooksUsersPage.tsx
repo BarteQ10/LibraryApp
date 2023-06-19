@@ -5,46 +5,85 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { fetchBooks } from "../../redux/booksSlice";
 import { useSelector } from "react-redux";
+import BooksFilter from "../Books/BooksFilter";
+import BookCard from "./BookCard";
+import { createLoan } from "../../redux/loansSlice";
+import Alert from '../../utils/alerts/Alert';
 
-// Define your component
 const BookUsersPage: React.FC = () => {
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState<"success" | "danger" | "warning" | "info" | "primary" | "secondary" | "light" | "dark">("success");
+  const [filterKey, setFilterKey] = useState<
+    "title" | "genre" | "author" | null
+  >(null);
+  const [filterValue, setFilterValue] = useState("");
+  const [sortKey, setSortKey] = useState<"title" | "genre" | "author" | null>(
+    null
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
   const books = useSelector((state: RootState) => state.books.books);
-  const loading = useSelector((state: RootState) => state.books.loading);
-  const error = useSelector((state: RootState) => state.books.error);
+  const loading = useSelector((state: RootState) => state.loans.loading);
   const dispatch: AppDispatch = useDispatch();
   const imageUrl = process.env.REACT_APP_IMAGE_URL;
-  useEffect(() => {
-    dispatch(fetchBooks());
-  }, [dispatch]);
 
+  useEffect(() => {
+    if (!loading) {
+      dispatch(fetchBooks());
+    }
+  }, [dispatch, loading]);
+
+  const filteredBooks =
+    filterKey && filterValue
+      ? books.filter((book: Book) =>
+          book[filterKey].toLowerCase().includes(filterValue.toLowerCase())
+        )
+      : books;
+
+  const sortedBooks = sortKey
+    ? [...filteredBooks].sort((a, b) =>
+        sortOrder === "asc"
+          ? a[sortKey].localeCompare(b[sortKey])
+          : b[sortKey].localeCompare(a[sortKey])
+      )
+    : filteredBooks;
+  const handleBorrow = async (bookId: number) => {
+    try {
+      await dispatch(createLoan(bookId));
+      dispatch(fetchBooks());
+      setAlertMessage("Book borrowed successfully!");
+      setAlertVariant("success");
+    } catch (error) {
+      setAlertMessage("Failed to borrow book.");
+      setAlertVariant("danger");
+    } finally {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000);  // Hide the alert after 3 seconds
+    }
+  };
   return (
     <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
       <Container>
+        {showAlert && <Alert message={alertMessage} variant={alertVariant}/>}
+        <BooksFilter
+          onFilterChange={(key, value) => {
+            setFilterKey(key);
+            setFilterValue(value);
+          }}
+          onSortChange={(key, order) => {
+            setSortKey(key);
+            setSortOrder(order);
+          }}
+        />
         <Row>
-          {books.map((book: Book) => (
+          {sortedBooks.map((book: Book) => (
             <Col xs={12} md={6} lg={4} className="mb-4" key={book.id}>
-              <Card className="mb-4 h-100 card-custom">
-                <Card.Img
-                  variant="top"
-                  src={imageUrl + book.coverImage}
-                  className="card-img-custom"
-                />
-                <Card.Body className="d-flex flex-column">
-                  <Card.Title>{book.title}</Card.Title>
-                  <Card.Text className="card-text-custom">
-                    <strong>Author:</strong> {book.author} <br />
-                    <strong>Genre:</strong> {book.genre} <br />
-                    {book.description}
-                  </Card.Text>
-                  {book.isAvailable ? (
-                    <Button variant="primary">Borrow</Button>
-                  ) : (
-                    <Button variant="secondary" disabled>
-                      Unavailable
-                    </Button>
-                  )}
-                </Card.Body>
-              </Card>
+              <BookCard
+                book={book}
+                onBorrow={handleBorrow}
+                imageUrl={imageUrl || ""}
+              />
             </Col>
           ))}
         </Row>
