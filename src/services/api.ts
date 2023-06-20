@@ -31,7 +31,6 @@ async function refresh() {
   try {
     const response = await axios.post(
       `${apiUrl}/Account/refresh`,
-      {},
       {
         headers: {
           Authorization: `Bearer ${token}`,

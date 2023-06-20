@@ -25,6 +25,7 @@ const BookUsersPage: React.FC = () => {
 
   const books = useSelector((state: RootState) => state.books.books);
   const loading = useSelector((state: RootState) => state.loans.loading);
+  const error = useSelector((state: RootState) => state.loans.error);
   const dispatch: AppDispatch = useDispatch();
   const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
@@ -48,24 +49,24 @@ const BookUsersPage: React.FC = () => {
           : b[sortKey].localeCompare(a[sortKey])
       )
     : filteredBooks;
-  const handleBorrow = async (bookId: number) => {
-    try {
-      await dispatch(createLoan(bookId));
-      dispatch(fetchBooks());
-      setAlertMessage("Book borrowed successfully!");
-      setAlertVariant("success");
-    } catch (error) {
-      setAlertMessage("Failed to borrow book.");
-      setAlertVariant("danger");
-    } finally {
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 3000);  // Hide the alert after 3 seconds
-    }
-  };
+    const handleBorrow = async (bookId: number) => {
+      try {
+        await dispatch(createLoan(bookId)).unwrap(); // Added .unwrap() to propagate the error if the promise is rejected
+        await dispatch(fetchBooks());
+        setAlertMessage("Book borrowed successfully!");
+        setAlertVariant("success");
+      } catch (error:any) {
+        setAlertMessage(error.message || "Failed to borrow book."); // Display the actual error message if available
+        setAlertVariant("danger");
+      } finally {
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 3000);  // Hide the alert after 3 seconds
+      }
+    };
   return (
     <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
       <Container>
-        {showAlert && <Alert message={alertMessage} variant={alertVariant}/>}
+        {showAlert && <Alert header="Borrow Book" message={alertMessage} variant={alertVariant} show={showAlert}/>}
         <BooksFilter
           onFilterChange={(key, value) => {
             setFilterKey(key);
