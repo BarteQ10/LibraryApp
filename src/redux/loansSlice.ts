@@ -38,8 +38,17 @@ export const createLoan = createAsyncThunk(
   "loans/createLoan",
   async (bookid: number, { rejectWithValue }) => {
     try {
-      const decodedToken: any = jwt_decode(token || "");
-      const userId = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      var userId = 0
+      if (token) {
+        try {
+          const decodedToken: any = jwt_decode(token || "");
+          userId = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+          userId = parseInt(userId.toString());
+        } catch (err) {
+          console.error("Problem with token decoding: ", err);
+        }
+      }
+      
       
       const response = await api.post(
         `/loans/create`,

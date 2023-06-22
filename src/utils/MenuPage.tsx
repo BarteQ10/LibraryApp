@@ -4,11 +4,17 @@ import jwt_decode from "jwt-decode";
 
 const MenuPage: React.FC = () => {
   let token = localStorage.getItem("token");
+  if (token) {
+    try {
   const decodedToken: any = jwt_decode(token || "");
-  const role =
+  var role =
     decodedToken[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ];
+  }catch(err) {
+    console.error("Problem with token decoding: ", err);
+  }
+}
   return (
     <div>
       <Navbar bg="light" expand="lg">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../redux/store';
 import { login } from '../redux/authSlice';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -8,18 +9,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleLogin = () => {
     // Wywołanie akcji logowania
-    dispatch(login({ email, password }));
-    if (localStorage.getItem('token') === null) {
-      alert('Błędne dane logowania');
-    } else {
-      alert('Zalogowano');
-      navigate('/books');
-    }
+    dispatch(login({ email, password })).then(() => {
+      if (localStorage.getItem('token') === null) {
+        alert('Błędne dane logowania');
+      } else {
+        alert('Zalogowano');
+        navigate('/books');
+      }
+    }).catch(() => {
+      alert('Błąd logowania');
+    })
     // Przekierowanie do strony z książkami po zalogowaniu
   };
   window.onbeforeunload = function () {
