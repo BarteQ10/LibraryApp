@@ -1,8 +1,7 @@
-// utils/alerts/Alert.tsx
 import React from "react";
 import { Alert as BootstrapAlert, Fade } from "react-bootstrap";
 
-interface AlertProps {
+export interface AlertProps {
   children?: React.ReactNode;
   header: string;
   message: string;
@@ -15,7 +14,8 @@ interface AlertProps {
     | "secondary"
     | "light"
     | "dark";
-    show: boolean;
+  show: boolean;
+  onClose?: () => void; // Dodajemy nowy prop onClose
 }
 
 const Alert: React.FC<AlertProps> = ({
@@ -23,10 +23,11 @@ const Alert: React.FC<AlertProps> = ({
   message,
   variant = "primary",
   show,
+  onClose, // Pobieramy onClose z propsów
 }) => {
   return (
     <Fade in={show} unmountOnExit={true}>
-      <BootstrapAlert className="alert-fixed" variant={variant} dismissible>
+      <BootstrapAlert className="alert-fixed" variant={variant} dismissible onClose={onClose}> {/* Dodajemy onClose do BootstrapAlert */}
         <BootstrapAlert.Heading>{header}</BootstrapAlert.Heading>
         {message}
       </BootstrapAlert>

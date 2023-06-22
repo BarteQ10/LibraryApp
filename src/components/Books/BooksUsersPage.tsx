@@ -8,12 +8,22 @@ import { useSelector } from "react-redux";
 import BooksFilter from "../Books/BooksFilter";
 import BookCard from "./BookCard";
 import { createLoan } from "../../redux/loansSlice";
-import Alert from '../../utils/alerts/Alert';
+import Alert from "../../utils/alerts/Alert";
+import { Oval } from "react-loader-spinner";
 
 const BookUsersPage: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [alertVariant, setAlertVariant] = useState<"success" | "danger" | "warning" | "info" | "primary" | "secondary" | "light" | "dark">("success");
+  const [alertVariant, setAlertVariant] = useState<
+    | "success"
+    | "danger"
+    | "warning"
+    | "info"
+    | "primary"
+    | "secondary"
+    | "light"
+    | "dark"
+  >("success");
   const [filterKey, setFilterKey] = useState<
     "title" | "genre" | "author" | null
   >(null);
@@ -22,16 +32,23 @@ const BookUsersPage: React.FC = () => {
     null
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
+  const [hasTriedToLoadData, setHasTriedToLoadData] = useState(false);
   const books = useSelector((state: RootState) => state.books.books);
-  const loading = useSelector((state: RootState) => state.loans.loading);
-  const error = useSelector((state: RootState) => state.loans.error);
+  const loading = useSelector((state: RootState) => state.books.loading);
+  const error = useSelector((state: RootState) => state.books.error);
   const dispatch: AppDispatch = useDispatch();
   const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
   useEffect(() => {
-    if (!loading) {
-      dispatch(fetchBooks());
+    if (!loading && !hasTriedToLoadData) {
+      setHasTriedToLoadData(true);
+      dispatch(fetchBooks()).catch((error) => {
+        console.log("Error in useEffect:", error);
+        setAlertMessage(error.message);
+        setAlertVariant("danger");
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 3000); // Hide the alert after 3 seconds
+      });
     }
   }, [dispatch, loading]);
 
@@ -49,24 +66,47 @@ const BookUsersPage: React.FC = () => {
           : b[sortKey].localeCompare(a[sortKey])
       )
     : filteredBooks;
-    const handleBorrow = async (bookId: number) => {
-      try {
-        await dispatch(createLoan(bookId)).unwrap(); // Added .unwrap() to propagate the error if the promise is rejected
-        await dispatch(fetchBooks());
-        setAlertMessage("Book borrowed successfully!");
-        setAlertVariant("success");
-      } catch (error:any) {
-        setAlertMessage(error.message || "Failed to borrow book."); // Display the actual error message if available
-        setAlertVariant("danger");
-      } finally {
-        setShowAlert(true);
-        setTimeout(() => setShowAlert(false), 3000);  // Hide the alert after 3 seconds
-      }
-    };
+  const handleBorrow = async (bookId: number) => {
+    try {
+      await dispatch(createLoan(bookId)).unwrap(); // Added .unwrap() to propagate the error if the promise is rejected
+      await dispatch(fetchBooks());
+      setAlertMessage("Book borrowed successfully!");
+      setAlertVariant("success");
+    } catch (error: any) {
+      setAlertMessage(error.message || "Failed to borrow book."); // Display the actual error message if available
+      setAlertVariant("danger");
+    } finally {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // Hide the alert after 3 seconds
+    }
+  };
+  if (loading) {
+    return (
+      <div className="gradient-background d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <Oval color="#00BFFF" height={100} width={100}/>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
+        <Container>
+          <Alert header="Error" message={error} variant="danger" show={true} />
+        </Container>
+      </div>
+    );
+  }
   return (
     <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
       <Container>
-        {showAlert && <Alert header="Borrow Book" message={alertMessage} variant={alertVariant} show={showAlert}/>}
+        {showAlert && (
+          <Alert
+            header="Borrow Book"
+            message={alertMessage}
+            variant={alertVariant}
+            show={showAlert}
+          />
+        )}
         <BooksFilter
           onFilterChange={(key, value) => {
             setFilterKey(key);

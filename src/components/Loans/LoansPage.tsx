@@ -15,7 +15,10 @@ import LoanBorrowAlert from "../../utils/alerts/LoanBorrowAlert";
 import LoanDeleteAlert from "../../utils/alerts/LoanDeleteAlert";
 import PaginationBar from "../PaginationBar";
 import RowsPerPageSelect from "../RowsPerPageSelect";
-
+import { tokenRefreshEventEmitter } from "../../services/api"; 
+import { Container } from "react-bootstrap";
+import Alert from "../../utils/alerts/Alert";
+import { Oval } from "react-loader-spinner";
 const LoansPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const loans = useSelector((state: RootState) => state.loans.loans);
@@ -27,11 +30,20 @@ const LoansPage: React.FC = () => {
   const [showReturnAlert, setShowReturnAlert] = useState(false);
   const [showBorrowAlert, setShowBorrowAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-
+  
   useEffect(() => {
     dispatch(fetchLoans());
   }, [dispatch]);
 
+  useEffect(() => {
+    const handleTokenRefresh = () => {
+      dispatch(fetchLoans());
+    };
+    tokenRefreshEventEmitter.on('tokenRefreshed', handleTokenRefresh);
+    return () => {
+      tokenRefreshEventEmitter.off('tokenRefreshed', handleTokenRefresh);
+    };
+  }, [dispatch]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -74,11 +86,20 @@ const LoansPage: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="gradient-background min-vh-100 ps-2 pe-2">Loading...</div>;
+    return (
+      <div className="gradient-background d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <Oval color="#00BFFF" height={100} width={100}/>
+      </div>
+    );
   }
-
   if (error) {
-    return <div className="gradient-background min-vh-100 ps-2 pe-2">{error}</div>;
+    return (
+      <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
+        <Container>
+          <Alert header="Error" message={error} variant="danger" show={true}  />
+        </Container>
+      </div>
+    );
   }
 
   return (

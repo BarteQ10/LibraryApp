@@ -18,9 +18,13 @@ const token = localStorage.getItem('token');
 export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   try {
     const response = await api.get(`/Books`); 
-    return response.data;
+    if (response.status == 200) {
+      return response.data;
+    } else {
+      throw new Error('Failed to fetch books');
+    }
   } catch (error) {
-    throw Error('Nie udało się pobrać listy książek.');
+    throw  Error('Failed to fetch books');
   }
 });
 
@@ -97,7 +101,7 @@ const booksSlice = createSlice({
       })
       .addCase(fetchBooks.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message ?? 'Wystąpił błąd podczas pobierania listy książek.';
+        state.error = action.error.message ?? 'Failed to fetch books.';
       });
   },
 });

@@ -1,5 +1,7 @@
 import axios, { AxiosError } from "axios";
+import EventEmitter from 'events';
 
+export const tokenRefreshEventEmitter = new EventEmitter();
 const apiUrl = process.env.REACT_APP_API_URL;
 
 // create a custom axios instance
@@ -44,6 +46,7 @@ async function errorHandler(error: AxiosError) {
           localStorage.setItem("token", response.data.jwtToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
           originalRequest.headers.Authorization = `Bearer ${response.data.jwtToken}`;
+          tokenRefreshEventEmitter.emit('tokenRefreshed');
           return instance(originalRequest); // Return the updated request with the new token
         } catch (refreshError) {
           console.log("Error refreshing token:", refreshError);

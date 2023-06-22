@@ -3,13 +3,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { fetchBooks, deleteBook } from "../../redux/booksSlice";
 import { Book, CreateBookDTO } from "../../models/Book";
-import { Button } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import BookModal from "../../utils/modals/BookModal";
 import BookDeleteAlert from "../../utils/alerts/BookDeleteAlert";
 import RowsPerPageSelect from "../RowsPerPageSelect";
 import PaginationBar from "../PaginationBar";
 import BooksTable from "./BooksTable";
 import { BsPlusCircle } from "react-icons/bs";
+import { Oval } from "react-loader-spinner";
+import Alert from "../../utils/alerts/Alert";
 const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
 const BooksPage: React.FC = () => {
@@ -68,13 +70,18 @@ const BooksPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="gradient-background min-vh-100 ps-2 pe-2">Loading...</div>
+      <div className="gradient-background d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <Oval color="#00BFFF" height={100} width={100}/>
+      </div>
     );
   }
-
   if (error) {
     return (
-      <div className="gradient-background min-vh-100 ps-2 pe-2">{error}</div>
+      <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
+        <Container>
+          <Alert header="Error" message={error} variant="danger" show={true} />
+        </Container>
+      </div>
     );
   }
 

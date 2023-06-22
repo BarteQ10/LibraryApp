@@ -4,33 +4,59 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../redux/store';
 import { login } from '../redux/authSlice';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Alert from '../utils/alerts/Alert';
+
+type AlertVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark';
+
+interface AlertObject {
+  show: boolean,
+  header: string,
+  message: string,
+  variant: AlertVariant,
+};
+
+const defaultAlert: AlertObject = {
+  show: false,
+  header: '',
+  message: '',
+  variant: 'primary',
+};
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [alert, setAlert] = useState(defaultAlert);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // Wywołanie akcji logowania
-    dispatch(login({ email, password })).then(() => {
-      if (localStorage.getItem('token') === null) {
-        alert('Błędne dane logowania');
-      } else {
-        alert('Zalogowano');
-        navigate('/books');
-      }
-    }).catch(() => {
-      alert('Błąd logowania');
-    })
-    // Przekierowanie do strony z książkami po zalogowaniu
+    setAlert({ show: true, header: 'Logowanie', message: 'Proszę czekać...', variant: 'info' });
+
+    dispatch(login({ email, password }))
+      .then((res) => {
+        if (res.payload && res.payload.jwtToken) {
+          setAlert({ ...defaultAlert, show: true, header: 'Sukces', message: 'Zalogowano pomyślnie!', variant: 'success' });
+          navigate('/books');
+        } else {
+          setAlert({ ...defaultAlert, show: true, header: 'Błąd', message: 'Błędne dane logowania', variant: 'danger' });
+        }
+      })
+      .catch((error) => {
+        setAlert({ ...defaultAlert, show: true, header: 'Błąd', message: 'Błąd logowania', variant: 'danger' });
+        console.error(error);
+      });
   };
   window.onbeforeunload = function () {
     window.scrollTo(0, 0);
   }
   return (
     <section className="h-100 gradient-background">
+       <Alert show={alert.show}
+        header={alert.header}
+        message={alert.message}
+        variant={alert.variant}
+        onClose={() => setAlert({...alert, show: false})}  
+      />
       <Container className="py-5 h-100">
         <Row className="d-flex justify-content-center align-items-center h-100 loginModal">
           <Col xs={12} md={8} lg={6} xl={5}>
