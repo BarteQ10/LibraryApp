@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { fetchBooks, deleteBook } from "../../redux/booksSlice";
 import { Book, CreateBookDTO } from "../../models/Book";
-import { Button, Container } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import BookModal from "../../utils/modals/BookModal";
 import BookDeleteAlert from "../../utils/alerts/BookDeleteAlert";
 import RowsPerPageSelect from "../RowsPerPageSelect";
@@ -12,10 +12,17 @@ import BooksTable from "./BooksTable";
 import { BsPlusCircle } from "react-icons/bs";
 import { Oval } from "react-loader-spinner";
 import Alert from "../../utils/alerts/Alert";
+import { AlertObject } from '../../utils/alerts/Alert';
 const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
 const BooksPage: React.FC = () => {
   const dispatch = useDispatch();
+  const defaultAlert: AlertObject = {
+    show: false,
+    header: '',
+    message: '',
+    variant: 'primary',
+  };
   const books = useSelector((state: RootState) => state.books.books);
   const loading = useSelector((state: RootState) => state.books.loading);
   const error = useSelector((state: RootState) => state.books.error);
@@ -25,7 +32,12 @@ const BooksPage: React.FC = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<number | null>(null);
-
+  const [alert, setAlert] = useState(defaultAlert);
+  useEffect(() => {
+    if (error) {
+      setAlert({ ...defaultAlert, show: true, header: 'Error', message: error, variant: 'danger' });
+    }
+  }, [error]);
   const BookDTO = (book: Book | null): CreateBookDTO | null => {
     if (!book) return null;
 
@@ -78,9 +90,12 @@ const BooksPage: React.FC = () => {
   if (error) {
     return (
       <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
-        <Container>
-          <Alert header="Error" message={error} variant="danger" show={true} />
-        </Container>
+          <Alert show={alert.show}
+            header={alert.header}
+            message={alert.message}
+            variant={alert.variant}
+            onClose={() => setAlert({...alert, show: false})}  
+          />
       </div>
     );
   }

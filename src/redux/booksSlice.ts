@@ -20,11 +20,9 @@ export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
     const response = await api.get(`/Books`); 
     if (response.status == 200) {
       return response.data;
-    } else {
-      throw new Error('Failed to fetch books');
     }
-  } catch (error) {
-    throw  Error('Failed to fetch books');
+  } catch (error:any) {
+    throw  Error(error.message ?? 'Failed to fetch books.');
   }
 });
 
@@ -46,8 +44,8 @@ export const createBook = createAsyncThunk('books/createBook', async (book: Crea
       },
     });
     return response.data;
-  } catch (error) {
-    throw Error('Nie udało się dodać książki.');
+  } catch (error:any) {
+    throw  Error(error.message ?? 'Failed to add book.');
   }
 });
 
@@ -69,8 +67,9 @@ export const updateBook = createAsyncThunk('books/updateBook', async (book: Crea
       },
     });
     return response.data;
-  } catch (error) {
-    throw Error('Nie udało się zaktualizować książki.');
+  } 
+  catch (error:any) {
+    throw  Error(error.message ?? 'Failed to update book.');
   }
 });
 
@@ -81,8 +80,8 @@ export const deleteBook = createAsyncThunk('books/deleteBook', async (bookId: nu
       'Content-Type': 'multipart/form-data',
     }});
     return bookId;
-  } catch (error) {
-    throw Error('Nie udało się usunąć książki.');
+  } catch (error:any) {
+    throw  Error(error.message ?? 'Failed to delete book.');
   }
 });
 const booksSlice = createSlice({

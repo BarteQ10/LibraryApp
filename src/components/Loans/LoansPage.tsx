@@ -16,11 +16,18 @@ import LoanDeleteAlert from "../../utils/alerts/LoanDeleteAlert";
 import PaginationBar from "../PaginationBar";
 import RowsPerPageSelect from "../RowsPerPageSelect";
 import { tokenRefreshEventEmitter } from "../../services/api"; 
-import { Container } from "react-bootstrap";
 import Alert from "../../utils/alerts/Alert";
 import { Oval } from "react-loader-spinner";
+import { AlertObject } from '../../utils/alerts/Alert';
+
 const LoansPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
+  const defaultAlert: AlertObject = {
+    show: false,
+    header: '',
+    message: '',
+    variant: 'primary',
+  };
   const loans = useSelector((state: RootState) => state.loans.loans);
   const loading = useSelector((state: RootState) => state.loans.loading);
   const error = useSelector((state: RootState) => state.loans.error);
@@ -30,7 +37,12 @@ const LoansPage: React.FC = () => {
   const [showReturnAlert, setShowReturnAlert] = useState(false);
   const [showBorrowAlert, setShowBorrowAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-  
+  const [alert, setAlert] = useState(defaultAlert);
+  useEffect(() => {
+    if (error) {
+      setAlert({ ...defaultAlert, show: true, header: 'Error', message: error, variant: 'danger' });
+    }
+  }, [error]);
   useEffect(() => {
     dispatch(fetchLoans());
   }, [dispatch]);
@@ -95,9 +107,12 @@ const LoansPage: React.FC = () => {
   if (error) {
     return (
       <div className="gradient-background min-vh-100 ps-2 pe-2 pt-3">
-        <Container>
-          <Alert header="Error" message={error} variant="danger" show={true}  />
-        </Container>
+          <Alert show={alert.show}
+            header={alert.header}
+            message={alert.message}
+            variant={alert.variant}
+            onClose={() => setAlert({...alert, show: false})}  
+          />
       </div>
     );
   }

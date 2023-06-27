@@ -36,6 +36,7 @@ const BookUsersPage: React.FC = () => {
   const books = useSelector((state: RootState) => state.books.books);
   const loading = useSelector((state: RootState) => state.books.loading);
   const error = useSelector((state: RootState) => state.books.error);
+  //const errorLoan = useSelector((state: RootState) => state.loans.error);
   const dispatch: AppDispatch = useDispatch();
   const imageUrl = process.env.REACT_APP_IMAGE_URL;
 
@@ -47,7 +48,7 @@ const BookUsersPage: React.FC = () => {
         setAlertMessage(error.message);
         setAlertVariant("danger");
         setShowAlert(true);
-        setTimeout(() => setShowAlert(false), 3000); // Hide the alert after 3 seconds
+        setTimeout(() => setShowAlert(false), 10000); // Hide the alert after 8 seconds
       });
     }
   }, [dispatch, loading]);
@@ -73,7 +74,13 @@ const BookUsersPage: React.FC = () => {
       setAlertMessage("Book borrowed successfully!");
       setAlertVariant("success");
     } catch (error: any) {
-      setAlertMessage(error.message || "Failed to borrow book."); // Display the actual error message if available
+      let errorMessage = error || "Failed to borrow book."; // Set the error message
+  
+      if (error.payload) {
+        errorMessage = error.payload; // If payload is present in error, update the errorMessage.
+      }
+  
+      setAlertMessage(errorMessage); 
       setAlertVariant("danger");
     } finally {
       setShowAlert(true);

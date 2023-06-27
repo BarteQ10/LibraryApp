@@ -5,15 +5,7 @@ import { AppDispatch } from '../redux/store';
 import { login } from '../redux/authSlice';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import Alert from '../utils/alerts/Alert';
-
-type AlertVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark';
-
-interface AlertObject {
-  show: boolean,
-  header: string,
-  message: string,
-  variant: AlertVariant,
-};
+import { AlertObject } from '../utils/alerts/Alert';
 
 const defaultAlert: AlertObject = {
   show: false,
@@ -30,19 +22,19 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    setAlert({ show: true, header: 'Logowanie', message: 'Proszę czekać...', variant: 'info' });
+    setAlert({ show: true, header: 'Logging', message: 'Please wait...', variant: 'info' });
 
     dispatch(login({ email, password }))
       .then((res) => {
         if (res.payload && res.payload.jwtToken) {
-          setAlert({ ...defaultAlert, show: true, header: 'Sukces', message: 'Zalogowano pomyślnie!', variant: 'success' });
+          setAlert({ ...defaultAlert, show: true, header: 'Success', message: 'Successfully logged in!', variant: 'success' });
           navigate('/books');
         } else {
-          setAlert({ ...defaultAlert, show: true, header: 'Błąd', message: 'Błędne dane logowania', variant: 'danger' });
+          setAlert({ ...defaultAlert, show: true, header: 'Error', message: 'Incorrect login details', variant: 'danger' });
         }
       })
       .catch((error) => {
-        setAlert({ ...defaultAlert, show: true, header: 'Błąd', message: 'Błąd logowania', variant: 'danger' });
+        setAlert({ ...defaultAlert, show: true, header: 'Error', message: 'Login error', variant: 'danger' });
         console.error(error);
       });
   };
@@ -105,7 +97,7 @@ const LoginPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <p className="mb-0">Don't have an account? <a href="#!" className="text-white-50 fw-bold">Sign Up</a>
+                  <p className="mb-0">Don't have an account? <a href="/register" className="text-white-50 fw-bold">Sign Up</a>
                   </p>
                 </div>
 

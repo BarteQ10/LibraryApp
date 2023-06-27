@@ -48,8 +48,6 @@ export const createLoan = createAsyncThunk(
           console.error("Problem with token decoding: ", err);
         }
       }
-      
-      
       const response = await api.post(
         `/loans/create`,
         {
@@ -63,8 +61,9 @@ export const createLoan = createAsyncThunk(
         }
       );
       return response.data;
-    } catch (error) {
-      return rejectWithValue("Nie udało się utworzyć wypożyczenia.");
+    } catch (error: any) {
+      const message = error.response?.data?.error  ? error.response.data.error : "Nie udało się utworzyć wypożyczenia.";
+      return rejectWithValue(message);
     }
   }
 );
@@ -79,8 +78,9 @@ export const startLoan = createAsyncThunk(
         },
       });
       return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue("Nie udało się zakończyć wypożyczenia.");
+    } catch (error: any) {
+      const message = error.response?.data?.error ? error.response.data.error : "Nie udało się zakończyć wypożyczenia.";
+      return thunkAPI.rejectWithValue(message);
     }
   }
 );
@@ -95,8 +95,9 @@ export const endLoan = createAsyncThunk(
         },
       });
       return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue("Nie udało się zakończyć wypożyczenia.");
+    } catch (error: any) {
+      const message = error.response?.data?.error ? error.response.data.error : "Nie udało się zakończyć wypożyczenia.";
+      return thunkAPI.rejectWithValue(message);
     }
   }
 );
@@ -111,8 +112,9 @@ export const deleteLoan = createAsyncThunk(
         },
       });
       return id;
-    } catch (error) {
-      return rejectWithValue("Nie udało się usunąć wypożyczenia.");
+    } catch (error: any) {
+      const message = error.response?.data?.error ? error.response.data.error : "Nie udało się usunąć wypożyczenia.";
+      return rejectWithValue(message);
     }
   }
 );

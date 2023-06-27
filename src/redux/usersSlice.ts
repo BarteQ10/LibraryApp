@@ -27,8 +27,8 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
       },
     });
     return response.data;
-  } catch (error) {
-    throw new Error("Failed to fetch users.");
+  } catch (error:any) {
+    throw Error(error.message ?? "Failed to fetch users.");
   }
 });
 
@@ -47,8 +47,8 @@ export const setUserStatus = createAsyncThunk(
         }
       );
       return response.data;
-    } catch (error) {
-      throw new Error("Failed to set user status.");
+    } catch (error:any) {
+      throw Error(error.message ?? "Failed to set user status.");
     }
   }
 );
