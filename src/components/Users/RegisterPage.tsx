@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector  } from "react-redux";
 import { register } from "../../redux/authSlice";
-import { ThunkDispatch } from "redux-thunk";
-import { AnyAction } from "redux";
 import { Button, Form, Container, Row, Col } from "react-bootstrap";
+import { RootState, AppDispatch } from "../../redux/store"; // zaimportuj RootState i AppDispatch
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const dispatch: ThunkDispatch<any, void, AnyAction> = useDispatch();
-
+  const dispatch = useDispatch<AppDispatch>(); // uzyj AppDispatch zamiast ThunkDispatch
+  const error = useSelector((state: RootState) => state.auth.error);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await dispatch(register({ email, password, confirmPassword }));
@@ -30,7 +29,7 @@ const RegisterPage: React.FC = () => {
                   <p className="text-white-50 mb-5">
                     Please enter your login and password!
                   </p>
-
+                  {error && <p className="text-danger">{error}</p>}
                   <Form.Group className="form-outline form-white mb-4">
                     <Form.Control
                       type="email"
